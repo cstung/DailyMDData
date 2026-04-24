@@ -38,19 +38,30 @@ function App() {
     }));
   }, [formData.totalRevAmt, formData.vatNetRevamt, formData.netLeasing, formData.vatLeasing]);
 
-  const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    let val = type === 'number' ? value : value;
-    
-    // Numeric validation: All numeric fields >= 0
-    if (type === 'number' && parseFloat(value) < 0) return;
-
-    setFormData(prev => ({ ...prev, [name]: val }));
+  const formatNumber = (val) => {
+    if (val === null || val === undefined || val === '') return '';
+    const str = val.toString();
+    const parts = str.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join('.');
   };
 
-  const formatDecimal = (name, value) => {
-    if (!isNaN(value) && value !== '') {
-      setFormData(prev => ({ ...prev, [name]: parseFloat(value).toFixed(2) }));
+  const parseNumber = (val) => {
+    if (typeof val !== 'string') return val;
+    return val.replace(/,/g, '');
+  };
+
+  const handleChange = (e) => {
+    let { name, value } = e.target;
+    const isNumeric = ['orderCount', 'discountAmt', 'netRevAmt', 'vatNetRevamt', 'totalRevAmt', 'netLeasing', 'vatLeasing', 'totalLeasing'].includes(name);
+
+    if (isNumeric) {
+      value = value.replace(/[^0-9.,]/g, '');
+      const parsed = parseNumber(value);
+      if ((parsed.match(/\./g) || []).length > 1) return;
+      setFormData(prev => ({ ...prev, [name]: parsed }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
@@ -60,7 +71,10 @@ function App() {
     // Auto format decimals on blur
     const numericFields = ['discountAmt', 'totalRevAmt', 'vatNetRevamt', 'netLeasing', 'vatLeasing'];
     if (numericFields.includes(name)) {
-      formatDecimal(name, value);
+      const parsed = parseNumber(value);
+      if (!isNaN(parsed) && parsed !== '') {
+        setFormData(prev => ({ ...prev, [name]: parseFloat(parsed).toFixed(2) }));
+      }
     }
 
     // Check if record exists when PK fields are filled
@@ -170,10 +184,10 @@ function App() {
               <div className="form-group">
                 <label>Order Count</label>
                 <input 
-                  type="number" 
+                  type="text" 
+                  inputMode="decimal"
                   name="orderCount" 
-                  step="1"
-                  value={formData.orderCount} 
+                  value={formatNumber(formData.orderCount)} 
                   onChange={handleChange} 
                 />
               </div>
@@ -187,10 +201,10 @@ function App() {
               <div className="form-group">
                 <label>Discount Amount</label>
                 <input 
-                  type="number" 
+                  type="text" 
+                  inputMode="decimal"
                   name="discountAmt" 
-                  step="0.01"
-                  value={formData.discountAmt} 
+                  value={formatNumber(formData.discountAmt)} 
                   onChange={handleChange} 
                   onBlur={handleBlur}
                 />
@@ -198,19 +212,20 @@ function App() {
               <div className="form-group highlight">
                 <label>Net Revenue (Auto)</label>
                 <input 
-                  type="number" 
+                  type="text" 
+                  inputMode="decimal"
                   name="netRevAmt" 
-                  value={formData.netRevAmt} 
+                  value={formatNumber(formData.netRevAmt)} 
                   disabled 
                 />
               </div>
               <div className="form-group">
                 <label>VAT Revenue</label>
                 <input 
-                  type="number" 
+                  type="text" 
+                  inputMode="decimal"
                   name="vatNetRevamt" 
-                  step="0.01"
-                  value={formData.vatNetRevamt} 
+                  value={formatNumber(formData.vatNetRevamt)} 
                   onChange={handleChange} 
                   onBlur={handleBlur}
                 />
@@ -218,10 +233,10 @@ function App() {
               <div className="form-group">
                 <label>Total Revenue</label>
                 <input 
-                  type="number" 
+                  type="text" 
+                  inputMode="decimal"
                   name="totalRevAmt" 
-                  step="0.01"
-                  value={formData.totalRevAmt} 
+                  value={formatNumber(formData.totalRevAmt)} 
                   onChange={handleChange} 
                   onBlur={handleBlur}
                 />
@@ -236,10 +251,10 @@ function App() {
               <div className="form-group">
                 <label>Net Leasing</label>
                 <input 
-                  type="number" 
+                  type="text" 
+                  inputMode="decimal"
                   name="netLeasing" 
-                  step="0.01"
-                  value={formData.netLeasing} 
+                  value={formatNumber(formData.netLeasing)} 
                   onChange={handleChange} 
                   onBlur={handleBlur}
                 />
@@ -247,10 +262,10 @@ function App() {
               <div className="form-group">
                 <label>VAT Leasing</label>
                 <input 
-                  type="number" 
+                  type="text" 
+                  inputMode="decimal"
                   name="vatLeasing" 
-                  step="0.01"
-                  value={formData.vatLeasing} 
+                  value={formatNumber(formData.vatLeasing)} 
                   onChange={handleChange} 
                   onBlur={handleBlur}
                 />
@@ -258,9 +273,10 @@ function App() {
               <div className="form-group highlight">
                 <label>Total Leasing (Auto)</label>
                 <input 
-                  type="number" 
+                  type="text" 
+                  inputMode="decimal"
                   name="totalLeasing" 
-                  value={formData.totalLeasing} 
+                  value={formatNumber(formData.totalLeasing)} 
                   disabled 
                 />
               </div>
