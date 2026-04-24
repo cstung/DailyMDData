@@ -12,16 +12,16 @@ A full-stack application to manage daily revenue reports.
 1. Open your MySQL client.
 2. Execute the SQL script located at `database/schema.sql` to create the database and table.
 
-### 2. Backend Setup
-1. Navigate to the `backend` directory.
-2. Open `.env` and update the database credentials:
+### 2. Configuration & Startup
+1. Copy the `.env.example` file to `.env` in the root directory (next to `docker-compose.yml`):
    ```env
    DB_HOST=localhost
    DB_USER=root
    DB_PASSWORD=your_password
    DB_NAME=revenue_db
+   PORT=5000
    ```
-3. Run `npm start` (or `node server.js`).
+2. Run `docker-compose up --build -d` to start the app.
 
 ### 3. Frontend Setup
 1. Navigate to the `frontend` directory.
