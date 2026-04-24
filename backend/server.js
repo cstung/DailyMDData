@@ -99,7 +99,7 @@ app.put('/api/revenue', async (req, res) => {
 });
 
 // Anything that doesn't match the API routes, send back index.html
-app.get('*', (req, res) => {
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
