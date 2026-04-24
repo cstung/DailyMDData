@@ -26,17 +26,17 @@ function App() {
 
   // Auto-calculate Totals
   useEffect(() => {
-    const netRev = parseFloat(formData.netRevAmt) || 0;
+    const totalRev = parseFloat(formData.totalRevAmt) || 0;
     const vatRev = parseFloat(formData.vatNetRevamt) || 0;
     const netLease = parseFloat(formData.netLeasing) || 0;
     const vatLease = parseFloat(formData.vatLeasing) || 0;
 
     setFormData(prev => ({
       ...prev,
-      totalRevAmt: (netRev + vatRev).toFixed(2),
+      netRevAmt: (totalRev - vatRev).toFixed(2),
       totalLeasing: (netLease + vatLease).toFixed(2)
     }));
-  }, [formData.netRevAmt, formData.vatNetRevamt, formData.netLeasing, formData.vatLeasing]);
+  }, [formData.totalRevAmt, formData.vatNetRevamt, formData.netLeasing, formData.vatLeasing]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -58,7 +58,7 @@ function App() {
     const { name, value } = e.target;
     
     // Auto format decimals on blur
-    const numericFields = ['discountAmt', 'netRevAmt', 'vatNetRevamt', 'netLeasing', 'vatLeasing'];
+    const numericFields = ['discountAmt', 'totalRevAmt', 'vatNetRevamt', 'netLeasing', 'vatLeasing'];
     if (numericFields.includes(name)) {
       formatDecimal(name, value);
     }
@@ -195,15 +195,13 @@ function App() {
                   onBlur={handleBlur}
                 />
               </div>
-              <div className="form-group">
-                <label>Net Revenue</label>
+              <div className="form-group highlight">
+                <label>Net Revenue (Auto)</label>
                 <input 
                   type="number" 
                   name="netRevAmt" 
-                  step="0.01"
                   value={formData.netRevAmt} 
-                  onChange={handleChange} 
-                  onBlur={handleBlur}
+                  disabled 
                 />
               </div>
               <div className="form-group">
@@ -217,13 +215,15 @@ function App() {
                   onBlur={handleBlur}
                 />
               </div>
-              <div className="form-group highlight">
-                <label>Total Revenue (Auto)</label>
+              <div className="form-group">
+                <label>Total Revenue</label>
                 <input 
                   type="number" 
                   name="totalRevAmt" 
+                  step="0.01"
                   value={formData.totalRevAmt} 
-                  disabled 
+                  onChange={handleChange} 
+                  onBlur={handleBlur}
                 />
               </div>
             </div>

@@ -19,7 +19,7 @@ A full-stack application to manage daily revenue reports.
    DB_USER=root
    DB_PASSWORD=your_password
    DB_NAME=revenue_db
-   PORT=5000
+   PORT=5432
    ```
 2. Run `docker-compose up --build -d` to start the app.
 
